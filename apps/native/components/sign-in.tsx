@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { authClient } from "@/lib/auth-client";
@@ -64,7 +70,11 @@ export function SignIn() {
         secureTextEntry
       />
 
-      <TouchableOpacity onPress={handleLogin} disabled={isLoading} style={styles.button}>
+      <TouchableOpacity
+        onPress={handleLogin}
+        disabled={isLoading}
+        style={styles.button}
+      >
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (

@@ -1,7 +1,9 @@
 // Generic Storybook example
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-const Button = ({ label }: { label: string }) => <button type="button">{label}</button>;
+const Button = ({ label }: { label: string }) => (
+  <button type="button">{label}</button>
+);
 
 const meta: Meta<typeof Button> = {
   title: "Example/Button",

@@ -1,39 +1,30 @@
 import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-  DeleteObjectCommand,
-  ListObjectsV2Command,
-  HeadObjectCommand,
   CopyObjectCommand,
-  type PutObjectCommandInput,
+  DeleteObjectCommand,
+  GetObjectCommand,
   type GetObjectCommandInput,
+  HeadObjectCommand,
+  ListObjectsV2Command,
   type ListObjectsV2CommandInput,
+  PutObjectCommand,
+  type PutObjectCommandInput,
+  S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-/**
- * Cloudflare R2 client for file storage (S3-compatible)
- * @see https://developers.cloudflare.com/r2/api/s3/api/
- */
+import { env } from "@flamingo/env/server";
+
 export const r2Client = new S3Client({
   region: "auto",
-  endpoint: `https://${process.env.R2_ACCOUNT_ID!}.r2.cloudflarestorage.com`,
+  endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+    accessKeyId: env.R2_ACCESS_KEY_ID ?? "",
+    secretAccessKey: env.R2_SECRET_ACCESS_KEY ?? "",
   },
 });
 
-const BUCKET_NAME = process.env.R2_BUCKET_NAME!;
+const BUCKET_NAME = env.R2_BUCKET_NAME ?? "";
 
-/**
- * Storage utilities for common R2 operations
- */
-
-/**
- * Upload a file to R2
- */
 export async function uploadFile(
   key: string,
   body: Buffer | Uint8Array | string | ReadableStream,
@@ -59,9 +50,6 @@ export async function uploadFile(
   };
 }
 
-/**
- * Download a file from R2
- */
 export async function downloadFile(key: string): Promise<{
   body: ReadableStream | null;
   contentType?: string;
@@ -84,9 +72,6 @@ export async function downloadFile(key: string): Promise<{
   };
 }
 
-/**
- * Download file as Buffer
- */
 export async function downloadFileAsBuffer(key: string): Promise<Buffer> {
   const input: GetObjectCommandInput = {
     Bucket: BUCKET_NAME,
@@ -104,9 +89,6 @@ export async function downloadFileAsBuffer(key: string): Promise<Buffer> {
   return Buffer.from(bytes);
 }
 
-/**
- * Delete a file from R2
- */
 export async function deleteFile(key: string): Promise<void> {
   const command = new DeleteObjectCommand({
     Bucket: BUCKET_NAME,
@@ -116,16 +98,10 @@ export async function deleteFile(key: string): Promise<void> {
   await r2Client.send(command);
 }
 
-/**
- * Delete multiple files from R2
- */
 export async function deleteFiles(keys: string[]): Promise<void> {
   await Promise.all(keys.map((key) => deleteFile(key)));
 }
 
-/**
- * List files in a directory/prefix
- */
 export async function listFiles(
   prefix?: string,
   options?: {
@@ -158,9 +134,6 @@ export async function listFiles(
   };
 }
 
-/**
- * Check if a file exists
- */
 export async function fileExists(key: string): Promise<boolean> {
   try {
     const command = new HeadObjectCommand({
@@ -175,9 +148,6 @@ export async function fileExists(key: string): Promise<boolean> {
   }
 }
 
-/**
- * Get file metadata without downloading the file
- */
 export async function getFileMetadata(key: string): Promise<{
   contentType?: string;
   contentLength?: number;
@@ -203,9 +173,6 @@ export async function getFileMetadata(key: string): Promise<{
   }
 }
 
-/**
- * Copy a file within R2
- */
 export async function copyFile(
   sourceKey: string,
   destinationKey: string,
@@ -224,9 +191,6 @@ export async function copyFile(
   };
 }
 
-/**
- * Move a file within R2 (copy then delete)
- */
 export async function moveFile(
   sourceKey: string,
   destinationKey: string,
@@ -236,13 +200,10 @@ export async function moveFile(
   return result;
 }
 
-/**
- * Generate a presigned URL for uploading a file
- */
 export async function getUploadUrl(
   key: string,
   options?: {
-    expiresIn?: number; // seconds, default 3600 (1 hour)
+    expiresIn?: number;
     contentType?: string;
   },
 ): Promise<string> {
@@ -257,13 +218,10 @@ export async function getUploadUrl(
   });
 }
 
-/**
- * Generate a presigned URL for downloading a file
- */
 export async function getDownloadUrl(
   key: string,
   options?: {
-    expiresIn?: number; // seconds, default 3600 (1 hour)
+    expiresIn?: number;
     responseContentDisposition?: string;
   },
 ): Promise<string> {
@@ -278,16 +236,9 @@ export async function getDownloadUrl(
   });
 }
 
-/**
- * Get the public URL for a file (requires public bucket or custom domain)
- * @param key - The file key
- * @param customDomain - Optional custom domain for public access (e.g., "files.example.com")
- */
 export function getPublicUrl(key: string, customDomain?: string): string {
   if (customDomain) {
     return `https://${customDomain}/${key}`;
   }
-  // R2 public buckets use the format: https://pub-<hash>.r2.dev/<key>
-  // This requires setting up public access in Cloudflare dashboard
-  return `https://${BUCKET_NAME}.${process.env.R2_ACCOUNT_ID}.r2.dev/${key}`;
+  return `https://${BUCKET_NAME}.${env.R2_ACCOUNT_ID}.r2.dev/${key}`;
 }

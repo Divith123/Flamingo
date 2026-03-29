@@ -1,67 +1,43 @@
-import { Worker, type Job } from "bullmq";
+import { type Job, Worker } from "bullmq";
+import { sendEmail } from "./email.js";
+import { logger } from "./logger.js";
+import {
+  connection,
+  type EmailJobData,
+  type NotificationJobData,
+} from "./queue.js";
 
-import { connection, type EmailJobData, type NotificationJobData } from "./queue";
-
-/**
- * Email worker - processes email sending jobs
- * @see https://docs.bullmq.io/guide/workers
- */
 export const emailWorker = new Worker<EmailJobData>(
   "email",
   async (job: Job<EmailJobData>) => {
-    const { to } = job.data;
+    const { to, subject, body } = job.data;
 
-    console.log(`Processing email job ${job.id}: sending to ${to}`);
+    logger.info({ jobId: job.id, to }, "Processing email job");
 
-    // TODO: Implement your email sending logic here
-    // Example with a hypothetical email service:
-    // await emailService.send({ to, subject, body, templateId });
+    await sendEmail({ to, subject, html: body });
 
-    // Simulate email sending
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    console.log(`Email job ${job.id} completed: sent to ${to}`);
+    logger.info({ jobId: job.id, to }, "Email job completed");
 
     return { sent: true, to, timestamp: new Date().toISOString() };
   },
   {
     connection,
-    concurrency: 5, // Process up to 5 jobs in parallel
+    concurrency: 5,
     limiter: {
-      max: 100, // Max 100 jobs
-      duration: 60000, // Per minute (rate limiting)
+      max: 100,
+      duration: 60000,
     },
   },
 );
 
-/**
- * Notification worker - processes notification jobs
- */
 export const notificationWorker = new Worker<NotificationJobData>(
   "notification",
   async (job: Job<NotificationJobData>) => {
     const { userId, type } = job.data;
 
-    console.log(`Processing notification job ${job.id}: ${type} to user ${userId}`);
+    logger.info({ jobId: job.id, userId, type }, "Processing notification job");
 
-    // TODO: Implement your notification logic here
-    // Example:
-    // switch (type) {
-    //   case "push":
-    //     await pushService.send(userId, { title, message, data });
-    //     break;
-    //   case "in-app":
-    //     await inAppNotificationService.create(userId, { title, message, data });
-    //     break;
-    //   case "sms":
-    //     await smsService.send(userId, message);
-    //     break;
-    // }
-
-    // Simulate notification processing
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    console.log(`Notification job ${job.id} completed`);
+    logger.info({ jobId: job.id }, "Notification job completed");
 
     return { sent: true, type, userId, timestamp: new Date().toISOString() };
   },
@@ -71,41 +47,29 @@ export const notificationWorker = new Worker<NotificationJobData>(
   },
 );
 
-// Event handlers for monitoring
 emailWorker.on("completed", (job) => {
-  console.log(`Email job ${job.id} has completed`);
+  logger.info({ jobId: job?.id }, "Email job completed");
 });
 
 emailWorker.on("failed", (job, err) => {
-  console.error(`Email job ${job?.id} has failed with error: ${err.message}`);
+  logger.error({ jobId: job?.id, err: err.message }, "Email job failed");
 });
 
 notificationWorker.on("completed", (job) => {
-  console.log(`Notification job ${job.id} has completed`);
+  logger.info({ jobId: job?.id }, "Notification job completed");
 });
 
 notificationWorker.on("failed", (job, err) => {
-  console.error(`Notification job ${job?.id} has failed with error: ${err.message}`);
+  logger.error({ jobId: job?.id, err: err.message }, "Notification job failed");
 });
 
-/**
- * Gracefully close all workers
- * Call this during application shutdown
- */
 export async function closeWorkers() {
   await emailWorker.close();
   await notificationWorker.close();
 }
 
-/**
- * Start all workers
- * Workers start automatically when created, but this function can be used
- * to ensure they're running or to restart after being paused
- */
 export function startWorkers() {
-  // Workers are already running by default
-  // This function is here for explicit control if needed
-  console.log("BullMQ workers started");
-  console.log("- Email worker: processing 'email' queue");
-  console.log("- Notification worker: processing 'notification' queue");
+  logger.info("BullMQ workers started");
+  logger.info("- Email worker: processing 'email' queue");
+  logger.info("- Notification worker: processing 'notification' queue");
 }

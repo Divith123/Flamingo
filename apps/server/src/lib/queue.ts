@@ -1,20 +1,16 @@
-import { Queue, type ConnectionOptions } from "bullmq";
+import { env } from "@flamingo/env/server";
+import { type ConnectionOptions, Queue } from "bullmq";
 
 export const connection: ConnectionOptions = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: Number(process.env.REDIS_PORT) || 6379,
-  password: process.env.REDIS_PASSWORD || undefined,
+  host: env.REDIS_HOST,
+  port: env.REDIS_PORT,
+  password: env.REDIS_PASSWORD,
   maxRetriesPerRequest: null,
 };
 
-/**
- * Example queue for background job processing
- * @see https://docs.bullmq.io/
- */
 export const emailQueue = new Queue("email", { connection });
 export const notificationQueue = new Queue("notification", { connection });
 
-// Define job data types
 export interface EmailJobData {
   to: string;
   subject: string;
@@ -30,9 +26,6 @@ export interface NotificationJobData {
   data?: Record<string, unknown>;
 }
 
-/**
- * Add an email job to the queue
- */
 export async function queueEmail(
   data: EmailJobData,
   options?: { delay?: number; priority?: number },
@@ -48,10 +41,10 @@ export async function queueEmail(
   });
 }
 
-/**
- * Add a notification job to the queue
- */
-export async function queueNotification(data: NotificationJobData, options?: { delay?: number }) {
+export async function queueNotification(
+  data: NotificationJobData,
+  options?: { delay?: number },
+) {
   return notificationQueue.add("send-notification", data, {
     delay: options?.delay,
     attempts: 3,
@@ -62,22 +55,19 @@ export async function queueNotification(data: NotificationJobData, options?: { d
   });
 }
 
-/**
- * Schedule a recurring job (cron-style)
- * @example scheduleRecurringJob(emailQueue, "daily-report", { type: "report" }, "0 9 * * *")
- */
 export async function scheduleRecurringJob<T>(
   queue: Queue,
   name: string,
   data: T,
-  pattern: string, // Cron pattern
+  pattern: string,
 ) {
-  return queue.upsertJobScheduler(name, { pattern }, { name, data: data as object });
+  return queue.upsertJobScheduler(
+    name,
+    { pattern },
+    { name, data: data as object },
+  );
 }
 
-/**
- * Get queue statistics
- */
 export async function getQueueStats(queue: Queue) {
   const [waiting, active, completed, failed, delayed] = await Promise.all([
     queue.getWaitingCount(),
@@ -90,10 +80,6 @@ export async function getQueueStats(queue: Queue) {
   return { waiting, active, completed, failed, delayed };
 }
 
-/**
- * Gracefully close all queues and connections
- * Call this during application shutdown
- */
 export async function closeQueues() {
   await emailQueue.close();
   await notificationQueue.close();

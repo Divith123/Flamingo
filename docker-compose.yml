@@ -13,12 +13,19 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - VITE_API_URL=http://server:3001
+      - NEXT_PUBLIC_SERVER_URL=http://server:3001
     restart: unless-stopped
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     networks:
       - flamingo-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   server:
     build:
@@ -27,15 +34,27 @@ services:
     container_name: flamingo-server
     ports:
       - "3001:3000"
+    env_file: ./apps/server/.env
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - DATABASE_URL=postgresql://postgres:password@db:5432/flamingo
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/flamingo
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - flamingo-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   db:
     image: postgres:16-alpine
@@ -43,7 +62,7 @@ services:
     environment:
       POSTGRES_DB: flamingo
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
@@ -57,9 +76,26 @@ services:
     networks:
       - flamingo-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: flamingo-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - flamingo_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - flamingo-network
+
 networks:
   flamingo-network:
     driver: bridge
 
 volumes:
   flamingo_postgres_data:
+  flamingo_redis_data:

@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { authClient } from "@/lib/auth-client";
@@ -50,7 +56,12 @@ export function SignUp() {
         </View>
       )}
 
-      <TextInput style={styles.input} placeholder="Name" value={name} onChangeText={setName} />
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
+      />
 
       <TextInput
         style={styles.input}
@@ -69,7 +80,11 @@ export function SignUp() {
         secureTextEntry
       />
 
-      <TouchableOpacity onPress={handleSignUp} disabled={isLoading} style={styles.button}>
+      <TouchableOpacity
+        onPress={handleSignUp}
+        disabled={isLoading}
+        style={styles.button}
+      >
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (

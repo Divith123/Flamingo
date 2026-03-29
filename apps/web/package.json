@@ -10,7 +10,10 @@
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.143",
@@ -76,6 +79,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
+    "autoprefixer": "^10.4.27",
     "jsdom": "catalog:",
     "playwright": "catalog:",
     "storybook": "^10.3.3",

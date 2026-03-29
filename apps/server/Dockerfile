@@ -1,40 +1,30 @@
 # Dockerfile for flamingo server
 # Optimized multi-stage build for Docker deployment
 
-# Build stage
-FROM oven/bun:1 AS builder
-
+FROM oven/bun:1 AS base
 WORKDIR /app
 
-# Copy package files
+FROM base AS deps
 COPY package.json bun.lock* ./
-COPY apps/server/package.json ./apps/server/
-COPY packages/db/package.json ./packages/db/
-
-# Install dependencies
 RUN bun install --frozen-lockfile
 
-# Copy source code
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN bun run build
 
-# Build the application
-RUN bun run build --filter=@flamingo/server
-
-# Production stage
 FROM oven/bun:1-slim AS runner
-
 WORKDIR /app
-
 ENV NODE_ENV=production
-ENV PORT=3000
 
-# Copy built application
-COPY --from=builder /app/apps/server/dist ./dist
-COPY --from=builder /app/apps/server/package.json ./
+RUN addgroup --system --gid 1001 bunjs
+RUN adduser --system --uid 1001 bunjs
 
-# Install production dependencies only
-RUN bun install --production --frozen-lockfile
+COPY --from=builder --chown=bunjs:bunjs /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
+USER bunjs
 EXPOSE 3000
 
 CMD ["bun", "run", "dist/index.js"]

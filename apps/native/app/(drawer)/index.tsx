@@ -22,7 +22,8 @@ export default function Home() {
             <View style={styles.sessionInfoCard}>
               <View style={styles.sessionUserRow}>
                 <Text style={styles.welcomeText}>
-                  Welcome, <Text style={styles.userNameText}>{session.user.name}</Text>
+                  Welcome,{" "}
+                  <Text style={styles.userNameText}>{session.user.name}</Text>
                 </Text>
               </View>
               <Text style={styles.emailText}>{session.user.email}</Text>
@@ -44,7 +45,9 @@ export default function Home() {
               <View
                 style={[
                   styles.statusIndicatorDot,
-                  healthCheck.data ? styles.statusIndicatorGreen : styles.statusIndicatorRed,
+                  healthCheck.data
+                    ? styles.statusIndicatorGreen
+                    : styles.statusIndicatorRed,
                 ]}
               />
               <Text style={styles.mutedText}>
@@ -60,7 +63,9 @@ export default function Home() {
             <Text style={styles.cardTitle}>Private Data</Text>
             {privateData && (
               <View>
-                <Text style={styles.mutedText}>{privateData.data?.message}</Text>
+                <Text style={styles.mutedText}>
+                  {privateData.data?.message}
+                </Text>
               </View>
             )}
           </View>
@@ -78,66 +83,66 @@ export default function Home() {
 
 const styles = StyleSheet.create((theme) => ({
   pageContainer: {
-    paddingHorizontal: 8,
+    paddingHorizontal: theme.spacing.sm,
   },
   headerTitle: {
-    color: theme?.colors?.typography,
-    fontSize: 30,
+    color: theme.colors.typography,
+    fontSize: theme.fontSize["3xl"],
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   sessionInfoCard: {
-    marginBottom: 24,
-    padding: 16,
-    borderRadius: 8,
+    marginBottom: theme.spacing.lg,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: theme?.colors?.border,
+    borderColor: theme.colors.border,
   },
   sessionUserRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   welcomeText: {
-    color: theme?.colors?.typography,
-    fontSize: 16,
+    color: theme.colors.typography,
+    fontSize: theme.fontSize.base,
   },
   userNameText: {
     fontWeight: "500",
-    color: theme?.colors?.typography,
+    color: theme.colors.typography,
   },
   emailText: {
-    color: theme?.colors?.typography,
-    fontSize: 14,
-    marginBottom: 16,
+    color: theme.colors.typography,
+    fontSize: theme.fontSize.sm,
+    marginBottom: theme.spacing.md,
   },
   signOutButton: {
-    backgroundColor: theme?.colors?.destructive,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
+    backgroundColor: theme.colors.destructive,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.sm,
     alignSelf: "flex-start",
   },
   signOutButtonText: {
     fontWeight: "500",
   },
   apiStatusCard: {
-    marginBottom: 24,
-    borderRadius: 8,
+    marginBottom: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: theme?.colors?.border,
-    padding: 16,
+    borderColor: theme.colors.border,
+    padding: theme.spacing.md,
   },
   cardTitle: {
-    marginBottom: 12,
+    marginBottom: theme.spacing.sm,
     fontWeight: "500",
-    color: theme?.colors?.typography,
+    color: theme.colors.typography,
   },
   apiStatusRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: theme.spacing.sm,
   },
   statusIndicatorDot: {
     height: 12,
@@ -151,13 +156,13 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.destructive,
   },
   mutedText: {
-    color: theme?.colors?.typography,
+    color: theme.colors.typography,
   },
   privateDataCard: {
-    marginBottom: 24,
-    borderRadius: 8,
+    marginBottom: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: theme?.colors?.border,
-    padding: 16,
+    borderColor: theme.colors.border,
+    padding: theme.spacing.md,
   },
 }));

@@ -46,7 +46,9 @@
     "db:studio": "turbo -F @flamingo/db db:studio",
     "db:generate": "turbo -F @flamingo/db db:generate",
     "db:migrate": "turbo -F @flamingo/db db:migrate",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "test": "turbo test",
+    "test:e2e": "npx playwright test"
   },
   "dependencies": {
     "@flamingo/env": "workspace:*",
@@ -57,6 +59,7 @@
     "@biomejs/biome": "^2.4.9",
     "@flamingo/config": "workspace:*",
     "@types/bun": "catalog:",
+    "autoprefixer": "^10.4.27",
     "turbo": "^2.8.21",
     "typescript": "catalog:"
   },

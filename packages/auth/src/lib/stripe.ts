@@ -1,9 +1,7 @@
 import { env } from "@flamingo/env/server";
 import Stripe from "stripe";
 
-export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-12-18",
-});
+export const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
 export async function createCheckoutSession(params: {
   priceId: string;
@@ -55,6 +53,13 @@ export async function createSubscriptionCheckout(params: {
   return session;
 }
 
-export async function constructWebhookEvent(payload: string | Buffer, signature: string) {
-  return stripe.webhooks.constructEvent(payload, signature, env.STRIPE_WEBHOOK_SECRET);
+export async function constructWebhookEvent(
+  payload: string | Buffer,
+  signature: string,
+) {
+  return stripe.webhooks.constructEvent(
+    payload,
+    signature,
+    env.STRIPE_WEBHOOK_SECRET,
+  );
 }

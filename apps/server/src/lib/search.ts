@@ -1,30 +1,22 @@
-import { MeiliSearch, type SearchParams, type SearchResponse, type Index } from "meilisearch";
+import { env } from "@flamingo/env/server";
+import {
+  type Index,
+  MeiliSearch,
+  type SearchParams,
+  type SearchResponse,
+} from "meilisearch";
 
-/**
- * Meilisearch client for lightning-fast search
- * @see https://www.meilisearch.com/docs
- */
 export const searchClient = new MeiliSearch({
-  host: process.env.MEILISEARCH_HOST!,
-  apiKey: process.env.MEILISEARCH_API_KEY,
+  host: env.MEILISEARCH_HOST ?? "http://localhost:7700",
+  apiKey: env.MEILISEARCH_API_KEY,
 });
 
-/**
- * Search utilities for common search patterns
- */
-
-/**
- * Get or create an index
- */
 export async function getIndex<T extends Record<string, unknown>>(
   indexName: string,
 ): Promise<Index<T>> {
   return searchClient.index<T>(indexName);
 }
 
-/**
- * Search documents in an index
- */
 export async function search<T extends Record<string, unknown>>(
   indexName: string,
   query: string,
@@ -34,9 +26,6 @@ export async function search<T extends Record<string, unknown>>(
   return index.search(query, options);
 }
 
-/**
- * Add or update documents in an index
- */
 export async function addDocuments<T extends Record<string, unknown>>(
   indexName: string,
   documents: T[],
@@ -47,9 +36,6 @@ export async function addDocuments<T extends Record<string, unknown>>(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Update documents in an index (partial update)
- */
 export async function updateDocuments<T extends Record<string, unknown>>(
   indexName: string,
   documents: Partial<T>[],
@@ -60,9 +46,6 @@ export async function updateDocuments<T extends Record<string, unknown>>(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Delete a document by ID
- */
 export async function deleteDocument(
   indexName: string,
   documentId: string | number,
@@ -72,9 +55,6 @@ export async function deleteDocument(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Delete multiple documents by IDs
- */
 export async function deleteDocuments(
   indexName: string,
   documentIds: string[],
@@ -84,18 +64,14 @@ export async function deleteDocuments(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Delete all documents in an index
- */
-export async function deleteAllDocuments(indexName: string): Promise<{ taskUid: number }> {
+export async function deleteAllDocuments(
+  indexName: string,
+): Promise<{ taskUid: number }> {
   const index = searchClient.index(indexName);
   const task = await index.deleteAllDocuments();
   return { taskUid: task.taskUid };
 }
 
-/**
- * Get a single document by ID
- */
 export async function getDocument<T extends Record<string, unknown>>(
   indexName: string,
   documentId: string | number,
@@ -108,15 +84,14 @@ export async function getDocument<T extends Record<string, unknown>>(
   }
 }
 
-/**
- * Get all documents from an index with pagination
- */
 export async function getDocuments<T extends Record<string, unknown>>(
   indexName: string,
   options?: { offset?: number; limit?: number; fields?: string[] },
 ): Promise<{ results: T[]; offset: number; limit: number; total: number }> {
   const index = searchClient.index<T>(indexName);
-  const result = await index.getDocuments(options as Parameters<typeof index.getDocuments>[0]);
+  const result = await index.getDocuments(
+    options as Parameters<typeof index.getDocuments>[0],
+  );
   return {
     results: result.results as T[],
     offset: result.offset ?? 0,
@@ -125,9 +100,6 @@ export async function getDocuments<T extends Record<string, unknown>>(
   };
 }
 
-/**
- * Create an index if it doesn't exist
- */
 export async function createIndex(
   indexName: string,
   options?: { primaryKey?: string },
@@ -136,18 +108,16 @@ export async function createIndex(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Delete an index
- */
-export async function deleteIndex(indexName: string): Promise<{ taskUid: number }> {
+export async function deleteIndex(
+  indexName: string,
+): Promise<{ taskUid: number }> {
   const task = await searchClient.deleteIndex(indexName);
   return { taskUid: task.taskUid };
 }
 
-/**
- * Get all indexes
- */
-export async function getIndexes(): Promise<{ uid: string; primaryKey: string | undefined }[]> {
+export async function getIndexes(): Promise<
+  { uid: string; primaryKey: string | undefined }[]
+> {
   const { results } = await searchClient.getIndexes();
   return results.map((index) => ({
     uid: index.uid,
@@ -155,9 +125,6 @@ export async function getIndexes(): Promise<{ uid: string; primaryKey: string | 
   }));
 }
 
-/**
- * Configure searchable attributes for an index
- */
 export async function updateSearchableAttributes(
   indexName: string,
   attributes: string[],
@@ -167,9 +134,6 @@ export async function updateSearchableAttributes(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Configure filterable attributes for an index
- */
 export async function updateFilterableAttributes(
   indexName: string,
   attributes: string[],
@@ -179,9 +143,6 @@ export async function updateFilterableAttributes(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Configure sortable attributes for an index
- */
 export async function updateSortableAttributes(
   indexName: string,
   attributes: string[],
@@ -191,31 +152,31 @@ export async function updateSortableAttributes(
   return { taskUid: task.taskUid };
 }
 
-/**
- * Wait for a task to complete
- */
 export async function waitForTask(taskUid: number): Promise<void> {
   await searchClient.waitForTask(taskUid);
 }
 
-/**
- * Get the status of a task
- */
 export async function getTaskStatus(taskUid: number): Promise<{
   status: "enqueued" | "processing" | "succeeded" | "failed" | "canceled";
   error?: { message: string; code: string };
 }> {
   const task = await searchClient.getTask(taskUid);
   return {
-    status: task.status,
-    error: task.error ? { message: task.error.message, code: task.error.code } : undefined,
+    status: task.status as
+      | "enqueued"
+      | "processing"
+      | "succeeded"
+      | "failed"
+      | "canceled",
+    error: task.error
+      ? { message: task.error.message, code: task.error.code }
+      : undefined,
   };
 }
 
-/**
- * Health check for Meilisearch
- */
-export async function healthCheck(): Promise<{ status: "available" | "unavailable" }> {
+export async function healthCheck(): Promise<{
+  status: "available" | "unavailable";
+}> {
   try {
     await searchClient.health();
     return { status: "available" };

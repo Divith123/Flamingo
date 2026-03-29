@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { Geist, Geist_Mono } from "next/font/google";
 
-import "../index.css";
+import "./globals.css";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
 
@@ -19,6 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "flamingo",
   description: "flamingo",
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
@@ -28,9 +29,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
+      >
         <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
+          <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
             {children}
           </div>

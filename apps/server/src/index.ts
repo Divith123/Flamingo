@@ -5,20 +5,39 @@ import { env } from "@flamingo/env/server";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
+import { logger as honoLogger } from "hono/logger";
+import { logger } from "./lib/logger.js";
+import { initSentry } from "./lib/sentry.js";
+import { startWorkers } from "./lib/workers.js";
+
+initSentry();
 
 const app = new Hono();
 
-app.use(logger());
+app.use(honoLogger());
 app.use(
   "/*",
   cors({
     origin: env.CORS_ORIGIN,
-    allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
     credentials: true,
   }),
 );
+
+app.onError((err, c) => {
+  logger.error({ err, path: c.req.path }, "Unhandled error");
+  return c.json({ error: "Internal Server Error" }, 500);
+});
+
+app.notFound((c) => {
+  return c.json({ error: "Not Found" }, 404);
+});
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
@@ -33,7 +52,15 @@ app.use(
 );
 
 app.get("/", (c) => {
-  return c.text("OK");
+  return c.json({ status: "ok", env: env.NODE_ENV });
 });
+
+app.get("/health", (c) => {
+  return c.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+startWorkers();
+
+logger.info("Server started");
 
 export default app;
