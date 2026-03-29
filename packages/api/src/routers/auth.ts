@@ -1,11 +1,19 @@
 import { auth } from "@flamingo/auth";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { protectedProcedure, router } from "../index";
+import { protectedProcedure, publicProcedure, router } from "../index";
 
 export const authRouter = router({
   me: protectedProcedure.query(({ ctx }) => {
     return ctx.session.user;
+  }),
+
+  debug: publicProcedure.query(({ ctx }) => {
+    return {
+      hasSession: !!ctx.session,
+      user: ctx.session?.user ?? null,
+      cookieHeader: ctx.headers.get("cookie")?.slice(0, 200) ?? null,
+    };
   }),
 
   updateProfile: protectedProcedure

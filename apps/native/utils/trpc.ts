@@ -3,14 +3,14 @@ import type { AppRouter } from "@flamingo/api/routers/index";
 import { env } from "@flamingo/env/native";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import { createTRPCReact } from "@trpc/tanstack-react-query";
 import { Platform } from "react-native";
 
 import { authClient } from "@/lib/auth-client";
 
 export const queryClient = new QueryClient();
 
-const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       url: `${env.EXPO_PUBLIC_SERVER_URL}/trpc`,

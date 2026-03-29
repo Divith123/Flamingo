@@ -11,10 +11,19 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 export const auth = betterAuth({
+  secret: env.BETTER_AUTH_SECRET,
+  baseURL: env.BETTER_AUTH_URL,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: schema,
   }),
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days in seconds
+    updateAge: 60 * 60 * 24, // 1 day in seconds - refresh session if older than this
+    cookieCache: {
+      maxAge: 60 * 5, // 5 minutes - how long to cache session in cookie
+    },
+  },
   trustedOrigins: [
     "http://localhost:3000",
     "http://localhost:3001",

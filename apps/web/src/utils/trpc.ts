@@ -9,17 +9,24 @@ import { toast } from "sonner";
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
-      toast.error(error.message, {
-        action: {
-          label: "retry",
-          onClick: query.invalidate,
-        },
-      });
+      // Only show error toasts for queries that have failed multiple times
+      // and aren't successfully showing old data (background updates)
+      if (query.state.fetchFailureCount > 2 && !query.state.data) {
+        toast.error(error.message, {
+          id: `query-error-${query.queryHash}`, // Prevent duplicate toasts for same query
+          action: {
+            label: "retry",
+            onClick: () => {
+              queryClient.invalidateQueries({ queryKey: query.queryKey });
+            },
+          },
+        });
+      }
     },
   }),
 });
 
-const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       url: `${env.NEXT_PUBLIC_SERVER_URL}/trpc`,

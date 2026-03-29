@@ -8,9 +8,34 @@ import {
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ToasterProps } from "sonner";
 import { Toaster as Sonner } from "sonner";
+
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("Sonner Toaster crashed:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return null;
+    }
+    return this.props.children;
+  }
+}
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
@@ -24,8 +49,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
     return null;
   }
 
-  try {
-    return (
+  return (
+    <ErrorBoundary>
       <Sonner
         theme={theme as ToasterProps["theme"]}
         className="toaster group"
@@ -55,11 +80,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         }}
         {...props}
       />
-    );
-  } catch (error) {
-    console.error("Sonner Toaster crashed:", error);
-    return null;
-  }
+    </ErrorBoundary>
+  );
 };
 
 export { Toaster };
