@@ -1,0 +1,29 @@
+{
+  "name": "@flamingo/auth",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.5.6",
+    "@better-auth/expo": "catalog:",
+    "@flamingo/db": "workspace:*",
+    "@flamingo/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "stripe": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@flamingo/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

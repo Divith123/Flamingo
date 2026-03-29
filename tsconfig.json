@@ -1,0 +1,3 @@
+{
+  "extends": "@flamingo/config/tsconfig.base.json"
+}
