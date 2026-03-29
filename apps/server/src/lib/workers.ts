@@ -1,5 +1,5 @@
+import { sendEmail } from "@flamingo/email";
 import { type Job, Worker } from "bullmq";
-import { sendEmail } from "./email.js";
 import { logger } from "./logger.js";
 import {
   connection,
@@ -55,12 +55,26 @@ emailWorker.on("failed", (job, err) => {
   logger.error({ jobId: job?.id, err: err.message }, "Email job failed");
 });
 
+emailWorker.on("error", (err) => {
+  logger.error(
+    { err: err.message },
+    "Email worker connection error (is Redis running?)",
+  );
+});
+
 notificationWorker.on("completed", (job) => {
   logger.info({ jobId: job?.id }, "Notification job completed");
 });
 
 notificationWorker.on("failed", (job, err) => {
   logger.error({ jobId: job?.id, err: err.message }, "Notification job failed");
+});
+
+notificationWorker.on("error", (err) => {
+  logger.error(
+    { err: err.message },
+    "Notification worker connection error (is Redis running?)",
+  );
 });
 
 export async function closeWorkers() {

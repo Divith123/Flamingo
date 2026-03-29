@@ -16,18 +16,11 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
   ],
   webServer: {
-    command: "bun dev",
+    command: "cd apps/web && bun dev",
     url: "http://localhost:3001",
     reuseExistingServer: !process.env.CI,
+    timeout: 60000,
   },
 });

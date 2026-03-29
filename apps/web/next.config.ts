@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   reactCompiler: true,
   output: "standalone",
-  transpilePackages: ["@flamingo/api", "@flamingo/db", "@flamingo/auth"],
+  transpilePackages: ["@flamingo/api", "@flamingo/auth", "@flamingo/db"],
   images: {
     remotePatterns: [
       {
@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
     ],
   },
   cacheComponents: true,
-  experimental: {},
+  serverExternalPackages: ["pg"],
 };
 
 export default nextConfig;

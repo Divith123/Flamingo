@@ -125,7 +125,7 @@ export async function listFiles(
 
   return {
     files: (response.Contents ?? []).map((item) => ({
-      key: item.Key!,
+      key: item.Key ?? "",
       size: item.Size,
       lastModified: item.LastModified,
     })),

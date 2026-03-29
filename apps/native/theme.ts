@@ -5,6 +5,13 @@ const sharedColors = {
   info: "#3B82F6",
 } as const;
 
+export const fonts = {
+  regular: "Gabarito_400Regular",
+  medium: "Gabarito_500Medium",
+  semibold: "Gabarito_600SemiBold",
+  bold: "Gabarito_700Bold",
+} as const;
+
 export const lightTheme = {
   colors: {
     ...sharedColors,
@@ -46,30 +53,30 @@ export const lightTheme = {
     lg: 18,
     xl: 20,
     "2xl": 24,
-    "3xl": 30,
     "4xl": 36,
   },
+  fonts,
 } as const;
 
 export const darkTheme = {
   colors: {
     ...sharedColors,
-    typography: "hsl(0 0% 100%)",
-    background: "hsl(0 0% 0%)",
-    foreground: "hsl(0 0% 100%)",
-    card: "hsl(0 0% 2%)",
-    cardForeground: "hsl(0 0% 100%)",
-    primary: "hsl(0 0% 90%)",
-    primaryForeground: "hsl(0 0% 0%)",
-    secondary: "hsl(0 0% 10%)",
-    secondaryForeground: "hsl(0 0% 100%)",
-    muted: "hsl(0 0% 8%)",
-    mutedForeground: "hsl(0 0% 65%)",
-    accent: "hsl(0 0% 8%)",
-    accentForeground: "hsl(0 0% 100%)",
-    border: "hsl(0 0% 15%)",
-    input: "hsl(0 0% 15%)",
-    ring: "hsl(0 0% 80%)",
+    typography: "#FFFFFF",
+    background: "#2c3338",
+    foreground: "#FFFFFF",
+    card: "#3c4656",
+    cardForeground: "#FFFFFF",
+    primary: "#008ef0",
+    primaryForeground: "#FFFFFF",
+    secondary: "#3c4656",
+    secondaryForeground: "#FFFFFF",
+    muted: "#434a52",
+    mutedForeground: "#838383",
+    accent: "#008ef0",
+    accentForeground: "#FFFFFF",
+    border: "#434a52",
+    input: "#3c4656",
+    ring: "#008ef0",
   },
   spacing: {
     xs: 4,
@@ -80,7 +87,7 @@ export const darkTheme = {
     xxl: 48,
   },
   borderRadius: {
-    sm: 6,
+    sm: 4,
     md: 8,
     lg: 12,
     xl: 16,
@@ -92,7 +99,7 @@ export const darkTheme = {
     lg: 18,
     xl: 20,
     "2xl": 24,
-    "3xl": 30,
     "4xl": 36,
   },
+  fonts,
 } as const;

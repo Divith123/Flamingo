@@ -6,7 +6,7 @@
     "build": "tsdown",
     "check-types": "tsc -b",
     "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "bun run --watch src/index.ts",
+    "dev": "bun run --watch --port 3001 src/index.ts",
     "start": "bun run dist/index.js"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "@flamingo/api": "workspace:*",
     "@flamingo/auth": "workspace:*",
     "@flamingo/db": "workspace:*",
+    "@flamingo/email": "workspace:*",
     "@flamingo/env": "workspace:*",
     "@hono/trpc-server": "^0.4.2",
     "@react-email/components": "^1.0.10",

@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-
-import { Geist, Geist_Mono } from "next/font/google";
+import { Gabarito } from "next/font/google";
 
 import "./globals.css";
-import Header from "@/components/header";
 import Providers from "@/components/providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const gabarito = Gabarito({
+  variable: "--font-gabarito",
   subsets: ["latin"],
 });
 
@@ -30,13 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${gabarito.className} ${gabarito.variable} antialiased`}
         suppressHydrationWarning
       >
         <Providers>
-          <div className="grid h-svh grid-rows-[auto_1fr]">
-            <Header />
-            {children}
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-1">{children}</main>
           </div>
         </Providers>
       </body>

@@ -31,7 +31,11 @@
       "zustand": "^5.0.5",
       "socket.io-client": "^4.8.3",
       "motion": "^12.17.0",
-      "@better-auth/expo": "^1.5.5"
+      "@better-auth/expo": "^1.5.5",
+      "react": "^19.0.0",
+      "@types/react": "^19.0.0",
+      "@react-email/components": "^0.0.33",
+      "resend": "^4.1.2"
     }
   },
   "type": "module",
@@ -58,8 +62,10 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.9",
     "@flamingo/config": "workspace:*",
+    "@playwright/test": "^1.58.2",
     "@types/bun": "catalog:",
     "autoprefixer": "^10.4.27",
+    "playwright": "^1.58.2",
     "turbo": "^2.8.21",
     "typescript": "catalog:"
   },

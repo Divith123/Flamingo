@@ -1,4 +1,5 @@
 import { auth } from "@flamingo/auth";
+import { db } from "@flamingo/db";
 import type { Context as HonoContext } from "hono";
 
 export type CreateContextOptions = {
@@ -11,6 +12,8 @@ export async function createContext({ context }: CreateContextOptions) {
   });
   return {
     session,
+    db,
+    headers: context.req.raw.headers,
   };
 }
 

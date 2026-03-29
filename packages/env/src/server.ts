@@ -6,17 +6,17 @@ export const env = createEnv({
   server: {
     // Core
     DATABASE_URL: z.string().min(1).startsWith("postgres"),
-    BETTER_AUTH_SECRET: z.string().min(32),
-    BETTER_AUTH_URL: z.url(),
-    CORS_ORIGIN: z.url(),
+    BETTER_AUTH_SECRET: z.string().min(32).optional(),
+    BETTER_AUTH_URL: z.string().url().optional(),
+    CORS_ORIGIN: z.string().url().optional(),
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
     // Stripe
-    STRIPE_SECRET_KEY: z.string().min(1),
-    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    STRIPE_SECRET_KEY: z.string().min(1).optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
     // Email
-    RESEND_API_KEY: z.string().min(1),
+    RESEND_API_KEY: z.string().min(1).optional(),
     RESEND_FROM_EMAIL: z.string().email().default("onboarding@resend.dev"),
     // Logging
     LOG_LEVEL: z
@@ -40,6 +40,11 @@ export const env = createEnv({
     R2_ACCESS_KEY_ID: z.string().optional(),
     R2_SECRET_ACCESS_KEY: z.string().optional(),
     R2_BUCKET_NAME: z.string().optional(),
+    // Social Auth
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
+    GITHUB_CLIENT_ID: z.string().optional(),
+    GITHUB_CLIENT_SECRET: z.string().optional(),
     // Payload CMS
     PAYLOAD_SECRET: z.string().min(32).optional(),
   },

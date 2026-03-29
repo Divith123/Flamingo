@@ -129,8 +129,8 @@ flamingo/
 ```bash
 bun install              # Install all dependencies
 bun dev                  # Start all apps in dev mode
-bun dev:web              # Start web app only (port 3001)
-bun dev:native           # Start Expo dev server
+bun dev:web              # Start web app + server (port 3001 + 4000)
+bun dev:app              # Start Expo dev server
 bun dev:server           # Start Hono server (hot reload)
 bun build                # Build all apps
 bun check-types          # TypeScript type checking (all packages)
@@ -278,6 +278,146 @@ bun db:studio            # Open Drizzle Studio
 - Database: PostgreSQL 16 Alpine container.
 - **NEVER** modify Docker config without testing the build.
 
+## Product Development Documentation
+
+Comprehensive product development documentation is available in the `docs/` directory. This documentation provides detailed specifications for all 15 Flamingo Business Suite products.
+
+### Documentation Structure (144,000+ words)
+
+```
+docs/
+├── README.md                          # Documentation index & navigation
+├── 01-product-overviews/              # 15 product specifications
+│   ├── flamingo-core.md               # Main all-in-one platform
+│   ├── flamingo-books.md              # Accounting & financial management
+│   ├── flamingo-expense.md            # Expense tracking & reporting
+│   ├── flamingo-payroll.md            # Employee salary & payroll
+│   ├── flamingo-inventory.md          # Stock & inventory management
+│   ├── flamingo-sign.md               # Digital signatures & documents
+│   ├── flamingo-billing.md            # Recurring billing & revenue
+│   ├── flamingo-commerce.md           # E-commerce & online selling
+│   ├── flamingo-practice.md           # Firm & client management
+│   ├── flamingo-invoice.md            # Simple invoicing & payments
+│   ├── flamingo-checkout.md           # Checkout pages & payment collection
+│   ├── flamingo-payments.md           # Global payment gateway
+│   ├── flamingo-spend.md              # Business expense control
+│   ├── flamingo-erp.md                # Enterprise resource planning
+│   └── flamingo-procurement.md        # Sourcing & purchasing
+├── 02-competitive-analysis/           # Market research & patterns
+│   ├── market-landscape.md            # $800B+ market analysis
+│   ├── ui-pattern-analysis.md         # Navigation, dashboard, form patterns
+│   ├── feature-comparisons.md         # Feature matrices by tier
+│   └── pricing-models.md              # Pricing strategies & recommendations
+├── 03-user-onboarding/                # Dashboard & onboarding specs
+│   └── unified-dashboard-design.md    # Post-login experience (profile-centered)
+├── 07-technical-architecture/         # Platform architecture
+│   └── multi-product-architecture.md  # Technical blueprint
+└── 08-development-roadmap/            # Implementation planning
+    └── priority-matrix.md             # 18-month roadmap
+```
+
+### Key Design Specifications
+
+**Unified Dashboard (Post-Login Experience):**
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Flamingo  [Search across all products...]     [🔔] 👤 Jane │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│                    Jane Doe                                 │
+│              CFO @ Acme Corporation                         │
+│                                                             │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐          │
+│  │  $2.4M  │ │  +18%   │ │   45    │ │  92%    │          │
+│  │  Cash   │ │  MRR    │ │  Tasks  │ │  Margin │          │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘          │
+│                                                             │
+│  ─────────────────────────────────────────────────────────  │
+│                                                             │
+│  Quick Access                                               │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │
+│  │ 📊 Books │ │ 📦 Inv.  │ │ 💰 Pay   │ │ ✍️  Sign │      │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │
+│  (All 15 products displayed in grid)                        │
+│                                                             │
+│  ─────────────────────────────────────────────────────────  │
+│                                                             │
+│  Action Items (8 pending)                                   │
+│  [Pending approvals, alerts, notifications]                 │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Product Switcher Pattern:**
+- Grid layout: 4 columns desktop, 2 tablet, 1 mobile
+- AI-sorted by frequency and recency of use
+- Pinned favorites at top
+- Search with fuzzy matching
+- Permission-based visibility
+
+### Development Phases
+
+**Phase 1 (Months 1-6): Foundation**
+- Core platform + Books + Invoice + Expense
+- Unified dashboard with product grid
+- Identity & Access Management
+- Basic integrations (Stripe, Plaid)
+
+**Phase 2 (Months 7-12): Enhancement**
+- Payroll + Billing + Inventory + Commerce
+- Automation engine
+- Advanced reporting
+- Mobile apps (iOS/Android)
+
+**Phase 3 (Months 13-18): Scale**
+- All 15 products
+- Enterprise features (multi-entity, consolidation)
+- Advanced compliance (SOC 2 Type II)
+- Global expansion
+
+### Technical Architecture Alignment
+
+All product development must align with the architecture defined in `docs/07-technical-architecture/multi-product-architecture.md`:
+
+**Shared Services:**
+- Identity: Better Auth with Drizzle adapter
+- Notifications: Socket.io + Resend
+- Search: MeiliSearch
+- Queue: BullMQ with Upstash Redis
+
+**Data Integration:**
+- Event-driven architecture
+- Shared data model (contacts, products, chart of accounts)
+- Clear ownership boundaries per product
+
+**Security Requirements:**
+- RBAC with granular permissions
+- Complete audit trail
+- SOC 2 Type II compliance path
+
+### Using the Documentation
+
+**For New Feature Development:**
+1. Review relevant product overview in `docs/01-product-overviews/`
+2. Check feature specifications in `docs/05-feature-specifications/`
+3. Follow UI/UX patterns in `docs/06-ui-ux-patterns/`
+4. Align with architecture in `docs/07-technical-architecture/`
+
+**For Competitive Analysis:**
+1. Start with `docs/02-competitive-analysis/market-landscape.md`
+2. Review UI patterns in `docs/02-competitive-analysis/ui-pattern-analysis.md`
+3. Check feature matrices in `docs/02-competitive-analysis/feature-comparisons.md`
+4. Reference pricing in `docs/02-competitive-analysis/pricing-models.md`
+
+**Documentation Quality Standards:**
+- All documents: 2000+ words minimum
+- Consistent structure across all documents
+- Research-backed recommendations
+- Actionable implementation guidance
+- Cross-references between related topics
+
+---
+
 ## Maintenance
 
 Update AGENTS.md AND CLAUDE.md when:
@@ -287,5 +427,12 @@ Update AGENTS.md AND CLAUDE.md when:
 - Modifying build/dev workflows
 - Adding new environment variables
 - Changing coding conventions or linting rules
+- **Updating product documentation in `docs/`**
 
 AI assistants MUST suggest updates to both files when they notice relevant changes.
+
+**Before starting any development work:**
+1. Check `docs/README.md` for documentation index
+2. Review relevant product specifications
+3. Ensure alignment with architecture documentation
+4. Update documentation if implementing new patterns

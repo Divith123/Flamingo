@@ -153,14 +153,14 @@ export async function updateSortableAttributes(
 }
 
 export async function waitForTask(taskUid: number): Promise<void> {
-  await searchClient.waitForTask(taskUid);
+  await searchClient.tasks.waitForTask(taskUid);
 }
 
 export async function getTaskStatus(taskUid: number): Promise<{
   status: "enqueued" | "processing" | "succeeded" | "failed" | "canceled";
   error?: { message: string; code: string };
 }> {
-  const task = await searchClient.getTask(taskUid);
+  const task = await searchClient.tasks.getTask(taskUid);
   return {
     status: task.status as
       | "enqueued"

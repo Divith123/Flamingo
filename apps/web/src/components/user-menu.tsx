@@ -1,5 +1,7 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import {
   DropdownMenu,
@@ -18,14 +20,19 @@ import { Skeleton } from "./ui/skeleton";
 export default function UserMenu() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
+  const [mounted, setMounted] = useState(false);
 
-  if (isPending) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || isPending) {
     return <Skeleton className="h-9 w-24" />;
   }
 
   if (!session) {
     return (
-      <Link href="/login">
+      <Link href={"/login" as Route}>
         <Button variant="outline">Sign In</Button>
       </Link>
     );
@@ -47,7 +54,7 @@ export default function UserMenu() {
               authClient.signOut({
                 fetchOptions: {
                   onSuccess: () => {
-                    router.push("/");
+                    router.push("/" as Route);
                   },
                 },
               });

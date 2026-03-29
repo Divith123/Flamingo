@@ -18,7 +18,7 @@ app.use(honoLogger());
 app.use(
   "/*",
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: env.CORS_ORIGIN ?? "http://localhost:3001",
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: [
       "Content-Type",

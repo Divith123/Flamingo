@@ -1,29 +1,21 @@
-import { z } from "zod";
-
-import { protectedProcedure, publicProcedure, router } from "../index";
+import { publicProcedure, router } from "../index";
+import { authRouter } from "./auth";
+import { booksRouter } from "./books";
+import { expenseRouter } from "./expense";
+import { invoiceRouter } from "./invoice";
+import { notificationRouter } from "./notification";
+import { organizationRouter } from "./organization";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
     return "OK";
   }),
-  privateData: protectedProcedure.query(({ ctx }) => {
-    return {
-      message: "This is private",
-      user: ctx.session.user,
-    };
-  }),
-  user: protectedProcedure.query(({ ctx }) => {
-    return ctx.session.user;
-  }),
-  updateUser: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1).max(100),
-      }),
-    )
-    .mutation(({ input }) => {
-      return { success: true, name: input.name };
-    }),
+  auth: authRouter,
+  organization: organizationRouter,
+  notification: notificationRouter,
+  invoice: invoiceRouter,
+  expense: expenseRouter,
+  books: booksRouter,
 });
 
 export type AppRouter = typeof appRouter;
